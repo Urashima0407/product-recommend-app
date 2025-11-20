@@ -8,3 +8,5 @@ pandas==2.2.3
 python-dotenv==1.0.1
 rank-bm25==0.2.2
 tiktoken==0.8.0
+SudachiPy==0.6.10
+SudachiDict-full==20250129
