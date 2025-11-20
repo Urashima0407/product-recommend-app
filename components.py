@@ -59,14 +59,18 @@ def display_product(result):
 
     # LLMレスポンスのテキストを辞書に変換
     product_lines = result[0].page_content.split("\n")
-    product = {item.split(": ")[0]: item.split(": ")[1] for item in product_lines}
+    product = {}
+    for item in product_lines:
+        if ": " in item:
+            key, value = item.split(": ", 1)
+            product[key] = value
 
     st.markdown("以下の商品をご提案いたします。")
 
     # 「商品名」と「価格」
     st.success(f"""
-            商品名：{product['name']}（商品ID: {product['id']}）\n
-            価格：{product['price']}
+            商品名：{product.get('name', '不明')}（商品ID: {product.get('id', '不明')}）\n
+            価格：{product.get('price', '不明')}
     """)
 
     # 在庫状況の表示
@@ -79,20 +83,23 @@ def display_product(result):
 
     # 「商品カテゴリ」と「メーカー」と「ユーザー評価」
     st.code(f"""
-        商品カテゴリ：{product['category']}\n
-        メーカー：{product['maker']}\n
-        評価：{product['score']}({product['review_number']}件)
+        商品カテゴリ：{product.get('category', '不明')}\n
+        メーカー：{product.get('maker', '不明')}\n
+        評価：{product.get('score', '不明')}({product.get('review_number', '不明')}件)
     """, language=None, wrap_lines=True)
 
     # 商品画像
-    st.image(f"images/products/{product['file_name']}", width=400)
+    if 'file_name' in product:
+        st.image(f"images/products/{product['file_name']}", width=400)
 
     # 商品説明
-    st.code(product['description'], language=None, wrap_lines=True)
+    if 'description' in product:
+        st.code(product['description'], language=None, wrap_lines=True)
 
     # おすすめ対象ユーザー
-    st.markdown("**こんな方におすすめ！**")
-    st.info(product["recommended_people"])
+    if 'recommended_people' in product:
+        st.markdown("**こんな方におすすめ！**")
+        st.info(product["recommended_people"])
 
     # 商品ページのリンク
     st.link_button("商品ページを開く", type="primary", use_container_width=True, url="https://google.com")
