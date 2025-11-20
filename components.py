@@ -75,11 +75,7 @@ def display_product(result):
 
     # 在庫状況の表示
     if 'stock_status' in product:
-        stock_status = product['stock_status']
-        if stock_status == ct.STOCK_STATUS_LOW:
-            st.warning(f"{ct.ICON_WARNING} 在庫状況：{stock_status}")
-        elif stock_status == ct.STOCK_STATUS_OUT:
-            st.error(f"{ct.ICON_ERROR} 在庫状況：{stock_status}")
+        show_stock_message(product['stock_status'])
 
     # 「商品カテゴリ」と「メーカー」と「ユーザー評価」
     st.code(f"""
@@ -103,3 +99,57 @@ def display_product(result):
 
     # 商品ページのリンク
     st.link_button("商品ページを開く", type="primary", use_container_width=True, url="https://google.com")
+
+
+def show_stock_message(stock_status: str):
+    """
+    在庫状況に応じたメッセージを表示
+
+    Args:
+        stock_status: 在庫状況の文字列
+    """
+    if stock_status == ct.STOCK_STATUS_OUT:
+        # 在庫切れ
+        st.markdown(
+            """
+            <div style="
+                border: 4px solid #e74c3c;
+                background-color: #fdecea;
+                padding: 16px;
+                border-radius: 8px;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            ">
+                <span style="font-size: 22px; margin-top: 2px;">ⓘ</span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.6;">
+                    申し訳ございませんが、本商品は在庫切れとなっております。<br>
+                    入荷までもうしばらくお待ちください。
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    elif stock_status == ct.STOCK_STATUS_LOW:
+        # 残りわずか
+        st.markdown(
+            """
+            <div style="
+                border: 4px solid #f39c12;
+                background-color: #fff7e6;
+                padding: 16px;
+                border-radius: 8px;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            ">
+                <span style="font-size: 22px; margin-top: 2px;">⚠️</span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.6;">
+                    ご好評につき、在庫数が残りわずかです。<br>
+                    購入をご希望の場合、お早めのご注文をおすすめいたします。
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
